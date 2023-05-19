@@ -8,6 +8,8 @@ services:
         - ./vault/config:/vault/config
         - ./vault/policies:/vault/policies
         - ./vault/data:/vault/data
+        - ./vault/logs:/vault/logs
+        - ./vault/file:/vault/file
       ports:
         - 8200:8200
       environment:
