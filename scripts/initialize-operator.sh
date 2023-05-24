@@ -12,7 +12,7 @@ else
     echo "Initializing Operator:"
     echo "----------------------"
     echo "Generating Unseal Keys:"
-    docker exec vault /bin/vault operator init > $SCRIPT_DIR/init_keys.txt
+    docker exec vault /bin/vault operator init > $SCRIPT_DIR/keys
     echo "The Operator has been initialized. Successfully"
     echo
     echo "Keys have been save under $SCRIPT_DIR/keys"
