@@ -1,21 +1,58 @@
 version: '3.8'
 
 services:
+  vault:
+    container_name: vault
+    image: vault:latest
+    user: ${UID:-0}
+    networks:
+      - vault
+    volumes:
+      - type: bind
+        source: ./vault/config
+        target: /vault/config
+      - type: bind
+        source: ./vault/policies
+        target: /vault/policies
+      - type: bind
+        source: ./vault/data
+        target: /mnt
+      - type: bind
+        source: ./vault/logs
+        target: /vault/logs
+    environment:
+      - VAULT_ADDR = ${VAULT_ADDR:-}
+      - VAULT_API_ADDR = ${VAULT_API_ADDR:-}
+      - VAULT_ADDRESS = ${VAULT_ADDRESS:-}
+    ports:
+      - 8200:8200
+    env_file:
+      - .env
+    cap_add:
+      - IPC_LOCK
+    command: vault server -config=/vault/config/config.hcl
 
-    vault:
-      container_name: vault
-      image: vault:latest
-      volumes:
-        - ./vault/config:/vault/config
-        - ./vault/policies:/vault/policies
-        - ./vault/data:/vault/data
-        - ./vault/logs:/vault/logs
-      ports:
-        - 8200:8200
-      environment:
-        - VAULT_ADDR=http://0.0.0.0:8200
-        - VAULT_API_ADDR=http://0.0.0.0:8200
-        - VAULT_ADDRESS=http://0.0.0.0:8200
-      cap_add:
-        - IPC_LOCK
-      command: vault server -config=/vault/config/vault.json
+  caddy:
+    image: caddy:alpine
+    container_name: caddy-reverse-proxy
+    restart: unless-stopped
+    networks:
+      - vault
+    ports:
+      - 80:80
+      - 443:443
+    env_file:
+      - .env
+    environment:
+      - VAULT_URL = ${VAULT_URL:-}
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+
+networks:
+  vault:
+
+volumes:
+  caddy_data:
+  caddy_config:

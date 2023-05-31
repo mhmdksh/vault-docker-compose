@@ -1,0 +1,8 @@
+#--------------------------------------------------------------------------
+# Caddy configuration
+# https://caddyserver.com/docs/caddyfile/options
+#--------------------------------------------------------------------------
+# HTTP site block
+{$VAULT_URL} {
+    reverse_proxy vault:8200
+}

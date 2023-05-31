@@ -5,13 +5,13 @@ disable_cache = true
 default_lease_ttl = "168h"
 max_lease_ttl = "0h"
 
-api_addr = "0.0.0.0:8200"
+api_addr = "$VAULT_ADDR"
 
 storage "file" {
   path = "/vault/data"
 }
 
 listener "tcp" {
-  address       = "0.0.0.0:8200"
-  tls_disable   = "true"
+  address     = "0.0.0.0:8200"
+  tls_disable = "true"
 }
